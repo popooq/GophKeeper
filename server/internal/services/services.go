@@ -7,9 +7,73 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/golang-jwt/jwt"
 	"gtihub.com/popooq/Gophkeeper/server/internal/storage"
 	"gtihub.com/popooq/Gophkeeper/server/types"
 )
+
+func generateJWT(user string, secret []byte) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+	claims["user"] = user
+
+	log.Println(secret)
+	tokenString, err := token.SignedString(secret)
+	if err != nil {
+		log.Printf("error in signing %s", err)
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
+func Registration(data io.Reader, keeper storage.Keeper) (int, error) {
+	var user types.User
+
+	body, err := io.ReadAll(data)
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	user, err = keeper.Registration(user.Login, user.Password)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusOK, nil
+}
+
+func Login(data io.Reader, secret []byte, keeper storage.Keeper) (string, int, error) {
+	var user types.User
+
+	body, err := io.ReadAll(data)
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
+
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
+
+	ok := keeper.Login(user.Login, user.Password)
+	if !ok {
+		return "", http.StatusUnauthorized, fmt.Errorf("")
+	}
+
+	jwt, err := generateJWT(user.Login, secret)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	return jwt, http.StatusOK, nil
+}
 
 func NewEntry(data io.Reader, keeper storage.Keeper) (int, error) {
 	var entry types.Entry
@@ -68,4 +132,14 @@ func GetEntry(username string, service string, keeper storage.Keeper) ([]byte, i
 	}
 
 	return i, http.StatusOK
+}
+
+func DeleteEntry(username string, service string, keeper storage.Keeper) int {
+
+	status, err := keeper.DeleteEntry(username, service)
+	if err != nil {
+		return http.StatusInternalServerError
+	}
+
+	return status
 }

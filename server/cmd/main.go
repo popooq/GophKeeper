@@ -17,7 +17,7 @@ func main() {
 	database := database.New(context, config.DatabaseAddress)
 	database.Migrate()
 
-	handlers := handlers.New(database)
+	handlers := handlers.New(database, config.Secret)
 	router := chi.NewRouter()
 	router.Mount("/", handlers.Route())
 

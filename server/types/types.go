@@ -6,3 +6,9 @@ type Entry struct {
 	Entry    string `json:"entry"`
 	Metadata string `json:"metadata"`
 }
+
+type User struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+	ID       int    `json:"id"`
+}
