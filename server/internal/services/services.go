@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"gtihub.com/popooq/Gophkeeper/server/internal/storage"
-	"gtihub.com/popooq/Gophkeeper/server/types"
+	"gtihub.com/popooq/Gophkeeper/server/internal/types"
 )
 
 func generateJWT(user string, secret []byte) (string, error) {

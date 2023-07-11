@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"gtihub.com/popooq/Gophkeeper/server/types"
+	"gtihub.com/popooq/Gophkeeper/server/internal/types"
 )
 
 type Keeper interface {
