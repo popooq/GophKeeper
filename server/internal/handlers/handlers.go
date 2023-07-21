@@ -1,3 +1,4 @@
+// пакет handlers содержит в себе все обработчики сервера
 package handlers
 
 import (
@@ -12,11 +13,13 @@ import (
 	"gtihub.com/popooq/Gophkeeper/server/internal/storage"
 )
 
+// структура Handlers состоит из keeper и secret-ключа
 type Handlers struct {
 	keeper storage.Keeper
 	secret []byte
 }
 
+// функция New создает новую структуру handlers
 func New(keeper storage.Keeper, secret string) *Handlers {
 	return &Handlers{
 		keeper: keeper,
@@ -24,14 +27,15 @@ func New(keeper storage.Keeper, secret string) *Handlers {
 	}
 }
 
+// функция Route задает маршрутизацию запросов
 func (h *Handlers) Route() *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "time=${time_rfc3339}, method=${method}, uri=${uri}, status=${status}, error=${error}\n",
 	}))
 
-	e.POST("/server/registration", h.Registration)
-	e.POST("/server/login", h.Login)
+	e.POST("/server/registration", h.registration)
+	e.POST("/server/login", h.login)
 
 	logged := e.Group("/entry", echojwt.WithConfig(echojwt.Config{SigningKey: []byte(h.secret)}))
 
@@ -42,7 +46,7 @@ func (h *Handlers) Route() *echo.Echo {
 	return e
 }
 
-func (h *Handlers) Registration(c echo.Context) error {
+func (h *Handlers) registration(c echo.Context) error {
 	status, err := services.Registration(c.Request().Body, h.keeper)
 	if err != nil {
 		c.Response().Writer.WriteHeader(status)
@@ -55,7 +59,7 @@ func (h *Handlers) Registration(c echo.Context) error {
 	return err
 }
 
-func (h *Handlers) Login(c echo.Context) error {
+func (h *Handlers) login(c echo.Context) error {
 	jwt, status, err := services.Login(c.Request().Body, h.secret, h.keeper)
 	if err != nil {
 		log.Println(status, err)

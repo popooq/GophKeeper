@@ -1,3 +1,4 @@
+// пакет Sender отправляет данные на сервер
 package sender
 
 import (
@@ -11,11 +12,15 @@ import (
 	"gtihub.com/popooq/Gophkeeper/client/internal/types"
 )
 
+// структура Sender
+// состоит из эндпоинта - адреса сервера
+// и из saver - структуры для сохранения jwt-ключа
 type Sender struct {
 	endpoint string
 	saver    *saver.Saver
 }
 
+// функция New создает новый Sender
 func New(endpoint string, saver *saver.Saver) Sender {
 	return Sender{
 		endpoint: endpoint,
@@ -23,6 +28,7 @@ func New(endpoint string, saver *saver.Saver) Sender {
 	}
 }
 
+// Регистрация нового пользователя
 func (s *Sender) Reg(login, password string) {
 	user := types.User{
 		Login:    login,
@@ -54,6 +60,7 @@ func (s *Sender) Reg(login, password string) {
 	}
 }
 
+// Авторизация пользователя
 func (s *Sender) Login(login, password string) {
 	user := types.User{
 		Login:    login,
@@ -89,6 +96,7 @@ func (s *Sender) Login(login, password string) {
 	}
 }
 
+// добавление новой информации
 func (s *Sender) Add(user, service, entry, metadata string) {
 	data := s.entryBuild(user, service, entry, metadata)
 
@@ -117,6 +125,8 @@ func (s *Sender) Add(user, service, entry, metadata string) {
 		defer resp.RawBody().Close()
 	}
 }
+
+// изменение существующей информации
 func (s *Sender) Update(user, service, entry, metadata string) {
 	data := s.entryBuild(user, service, entry, metadata)
 
@@ -145,6 +155,8 @@ func (s *Sender) Update(user, service, entry, metadata string) {
 		defer resp.RawBody().Close()
 	}
 }
+
+// получение информации по паре логин/сервис
 func (s *Sender) Get(user, service string) {
 	endpoint, err := url.JoinPath("http://", s.endpoint, "entry/get", user, service)
 	if err != nil {
@@ -169,6 +181,7 @@ func (s *Sender) Get(user, service string) {
 	}
 }
 
+// удаление информации по паре логин/сервис
 func (s *Sender) Delete(user, service string) {
 	endpoint, err := url.JoinPath("http://", s.endpoint, "entry/delete", user, service)
 	if err != nil {
