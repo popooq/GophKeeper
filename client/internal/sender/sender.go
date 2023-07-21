@@ -90,7 +90,7 @@ func (s *Sender) Login(login, password string) {
 }
 
 func (s *Sender) Add(user, service, entry, metadata string) {
-	data := entryBuild(user, service, entry, metadata)
+	data := s.entryBuild(user, service, entry, metadata)
 
 	body := bytes.NewBuffer(data)
 
@@ -118,7 +118,7 @@ func (s *Sender) Add(user, service, entry, metadata string) {
 	}
 }
 func (s *Sender) Update(user, service, entry, metadata string) {
-	data := entryBuild(user, service, entry, metadata)
+	data := s.entryBuild(user, service, entry, metadata)
 
 	body := bytes.NewBuffer(data)
 
@@ -193,7 +193,7 @@ func (s *Sender) Delete(user, service string) {
 	}
 }
 
-func entryBuild(user, service, entry, metadata string) []byte {
+func (s *Sender) entryBuild(user, service, entry, metadata string) []byte {
 	data := types.Entry{
 		User:     user,
 		Service:  service,

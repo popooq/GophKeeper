@@ -37,6 +37,9 @@ func (s *Saver) SaveJWT(jwt []byte) error {
 }
 
 func (s *Saver) LoadJWT() ([]byte, error) {
+	if s.readwriter == nil {
+		return nil, nil
+	}
 	data, err := io.ReadAll(s.readwriter)
 	if err != nil {
 		log.Printf("read err : %s", err)
