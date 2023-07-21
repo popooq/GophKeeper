@@ -1,3 +1,5 @@
+// Пакет Agent клиента
+// агент распределяет запросы по сендеру
 package agent
 
 import (
@@ -5,11 +7,14 @@ import (
 	"gtihub.com/popooq/Gophkeeper/client/internal/sender"
 )
 
+// структура Agent необходимая для работы агента
+// состоит из конфига и сендера
 type Agent struct {
 	config *config.Config
 	sender sender.Sender
 }
 
+// Функция New создает новый агент
 func New(config *config.Config, sender sender.Sender) *Agent {
 	return &Agent{
 		config: config,
@@ -17,6 +22,7 @@ func New(config *config.Config, sender sender.Sender) *Agent {
 	}
 }
 
+// Функция Run запускает агент в работу
 func (a *Agent) Run() {
 	switch a.config.RequestType {
 	case "reg":

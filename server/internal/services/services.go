@@ -127,7 +127,7 @@ func GetEntry(username string, service string, keeper storage.Keeper) ([]byte, i
 
 	i, err := json.Marshal(entry)
 	if err != nil {
-		log.Println("error during marshalling. pckg setvices", err)
+		log.Println("error during marshalling. pckg services", err)
 		return nil, http.StatusInternalServerError
 	}
 
