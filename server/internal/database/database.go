@@ -11,7 +11,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"gtihub.com/popooq/Gophkeeper/server/types"
+	"gtihub.com/popooq/Gophkeeper/server/internal/types"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
