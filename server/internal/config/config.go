@@ -1,3 +1,5 @@
+// Пакет config
+// Содержит конфиг сервера
 package config
 
 import (
@@ -7,12 +9,15 @@ import (
 	"github.com/caarlos0/env/v6"
 )
 
+// Структура Config
+// Содержит поля с конфигурацией сервера
 type Config struct {
-	Address         string `env:"ADDRESS"`
-	DatabaseAddress string `env:"DBA"`
-	Secret          string `env:"SECRET"`
+	Address         string `env:"ADDRESS"` // адрес сервера
+	DatabaseAddress string `env:"DBA"`     // адрес базы данных
+	Secret          string `env:"SECRET"`  // ключ для создания jwt
 }
 
+// Функция New создает новый конфиг
 func New() *Config {
 	var cfg Config
 	flag.StringVar(&cfg.Address, "a", "", "Server Address")

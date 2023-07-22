@@ -1,3 +1,5 @@
+// пакет database
+// содержит в себе методы реализации интерфейса storage
 package database
 
 import (
@@ -16,6 +18,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+// структура базы данных
 type Database struct {
 	db  *sql.DB
 	ctx context.Context
@@ -31,6 +34,7 @@ var (
 	loginUser     string = "SELECT EXISTS(SELECT login, password_hash FROM users WHERE login = $1 AND password_hash = $2)"
 )
 
+// возвращает новую структуру базы данных
 func New(context context.Context, address string) *Database {
 	if address == "" {
 		log.Fatalf("cannot open DB there is no DB address %s", address)
@@ -48,6 +52,7 @@ func New(context context.Context, address string) *Database {
 	}
 }
 
+// исполняет миграции
 func (d *Database) Migrate() {
 	driver, err := postgres.WithInstance(d.db, &postgres.Config{})
 	if err != nil {
@@ -68,6 +73,8 @@ func (d *Database) Migrate() {
 		log.Fatalln(err)
 	}
 }
+
+// добавляет нового пользователя в базу данных
 func (d *Database) Registration(username, password string) (types.User, error) {
 	user := types.User{
 		Login: username,
@@ -86,6 +93,7 @@ func (d *Database) Registration(username, password string) (types.User, error) {
 	return user, nil
 }
 
+// проверяет пользователя
 func (d *Database) Login(username, password string) bool {
 	if d.db == nil {
 		log.Println("you haven`t opened the database connection")
@@ -122,6 +130,7 @@ func (d *Database) Login(username, password string) bool {
 
 }
 
+// добавляет чуувствительную информацию в базу данных
 func (d *Database) NewEntry(entry types.Entry) error {
 	if d.db == nil {
 		err := fmt.Errorf("you haven`t opened the database connection")
@@ -151,6 +160,7 @@ func (d *Database) NewEntry(entry types.Entry) error {
 	return tx.Commit()
 }
 
+// обновляет чувствительную информацию
 func (d *Database) UpdateEntry(entry types.Entry) error {
 	if d.db == nil {
 		err := fmt.Errorf("you haven`t opened the database connection")
@@ -181,6 +191,7 @@ func (d *Database) UpdateEntry(entry types.Entry) error {
 	return tx.Commit()
 }
 
+// получают чувствительную информацию по логину и сервису
 func (d *Database) GetEntry(username, service string) (types.Entry, error) {
 	var entry types.Entry
 
@@ -205,6 +216,7 @@ func (d *Database) GetEntry(username, service string) (types.Entry, error) {
 	return entry, nil
 }
 
+// удаляет чувствительную информацию по логину и сервису
 func (d *Database) DeleteEntry(username, service string) (int, error) {
 
 	if d.db == nil {

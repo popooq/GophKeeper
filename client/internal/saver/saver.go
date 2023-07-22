@@ -1,3 +1,5 @@
+// Пакет Saver
+// Необходим для сохранения и загрузки JWT ключа из файла
 package saver
 
 import (
@@ -7,6 +9,9 @@ import (
 	"os"
 )
 
+// Структура Saver
+// Содержит в себе файл с которым производится взаимодействие
+// и содержит в себе readwriter
 type Saver struct {
 	file       *os.File
 	readwriter *bufio.ReadWriter
@@ -28,6 +33,7 @@ func New(storefile string) *Saver {
 	}
 }
 
+// Функция SфveJWT сохраняет JWT-ключ в файл
 func (s *Saver) SaveJWT(jwt []byte) error {
 	_, err := s.readwriter.Write(jwt)
 	if err != nil {
@@ -36,7 +42,11 @@ func (s *Saver) SaveJWT(jwt []byte) error {
 	return s.readwriter.Flush()
 }
 
+// Функция LoadJWT загружает JWT-ключ из файла
 func (s *Saver) LoadJWT() ([]byte, error) {
+	if s.readwriter == nil {
+		return nil, nil
+	}
 	data, err := io.ReadAll(s.readwriter)
 	if err != nil {
 		log.Printf("read err : %s", err)

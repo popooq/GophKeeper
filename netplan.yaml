@@ -1,0 +1,13 @@
+network:
+  version: 2
+  render: networkd
+  ethernets:
+    ens160:
+      addresses:
+        - 10.88.2.55
+      dhcp4: no
+      nameservers:
+        addresses: -192.168.0.224, 192.168.0.221
+      routes:
+        - to: default
+          via: 10.88.2.8

@@ -1,3 +1,5 @@
+// пакет services
+// содержит в себе сервисы обработчиков системы
 package services
 
 import (
@@ -28,6 +30,9 @@ func generateJWT(user string, secret []byte) (string, error) {
 	return tokenString, nil
 }
 
+// реализация регистрации пользователя
+// принимает на вход data io.Reader - тело запроса
+// и keeper storage.Keeper - интерфейс реализующий запрос к БД
 func Registration(data io.Reader, keeper storage.Keeper) (int, error) {
 	var user types.User
 
@@ -49,6 +54,10 @@ func Registration(data io.Reader, keeper storage.Keeper) (int, error) {
 	return http.StatusOK, nil
 }
 
+// реализация авторизации пользователя
+// принимает на вход data io.Reader - тело запроса,
+// secret []byte - jwt-ключ
+// и keeper storage.Keeper - интерфейс реализующий запрос к БД
 func Login(data io.Reader, secret []byte, keeper storage.Keeper) (string, int, error) {
 	var user types.User
 
@@ -75,6 +84,9 @@ func Login(data io.Reader, secret []byte, keeper storage.Keeper) (string, int, e
 	return jwt, http.StatusOK, nil
 }
 
+// реализация добавления инфромации в сервис
+// принимает на вход data io.Reader - тело запроса
+// и keeper storage.Keeper - интерфейс реализующий запрос к БД
 func NewEntry(data io.Reader, keeper storage.Keeper) (int, error) {
 	var entry types.Entry
 
@@ -96,6 +108,9 @@ func NewEntry(data io.Reader, keeper storage.Keeper) (int, error) {
 	return http.StatusOK, nil
 }
 
+// реализация обновления инфромации в сервисе
+// принимает на вход data io.Reader - тело запроса
+// и keeper storage.Keeper - интерфейс реализующий запрос к БД
 func UpdateEntry(data io.Reader, keeper storage.Keeper) ([]byte, int) {
 	var entry types.Entry
 
@@ -117,6 +132,10 @@ func UpdateEntry(data io.Reader, keeper storage.Keeper) ([]byte, int) {
 	return []byte("entry updatet"), http.StatusOK
 }
 
+// реализация получения инфромации из сервиса
+// принимает на вход username string - логин пользователя,
+// service string - имя сервиса
+// и keeper storage.Keeper - интерфейс реализующий запрос к БД
 func GetEntry(username string, service string, keeper storage.Keeper) ([]byte, int) {
 
 	entry, err := keeper.GetEntry(username, service)
@@ -127,13 +146,17 @@ func GetEntry(username string, service string, keeper storage.Keeper) ([]byte, i
 
 	i, err := json.Marshal(entry)
 	if err != nil {
-		log.Println("error during marshalling. pckg setvices", err)
+		log.Println("error during marshalling. pckg services", err)
 		return nil, http.StatusInternalServerError
 	}
 
 	return i, http.StatusOK
 }
 
+// реализация удаления инфромации из сервиса
+// принимает на вход username string - логин пользователя,
+// service string - имя сервиса
+// и keeper storage.Keeper - интерфейс реализующий запрос к БД
 func DeleteEntry(username string, service string, keeper storage.Keeper) int {
 
 	status, err := keeper.DeleteEntry(username, service)
